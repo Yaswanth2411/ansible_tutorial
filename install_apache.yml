@@ -1,27 +1,39 @@
 ---
-- name: Install Apache on CentOS
+- name: Install Apache2 on Ubuntu/CentOS
   hosts: all
   become: yes
 
   tasks:
-    - name: Update the package cache
-      yum:
-        name: '*'
-        state: latest
-      when: ansible_os_family == 'RedHat'
+    - name: update repository index
+      apt:
+        update_cache: yes 
+      when: ansible_distribution == "Ubuntu"
 
     - name: Install Apache package
-      package:
-        name: httpd
-        state: present
+      apt:
+        name: apache2
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+    
+    - name: add php support for apache
+      apt:
+        name: libapache2-mod-php
+        state: latest
+      when: ansible_distribution == "Ubuntu"
 
-    - name: Start Apache service
-      service:
-        name: httpd
-        state: started
+    - name: update repository index
+      dnf:
+        update_cache: yes 
+      when: ansible_distribution == "CentOS"
 
-    - name: Enable Apache service on boot
-      service:
+    - name: Install Apache package
+      dnf:
         name: httpd
-        enabled: yes
-
+        state: latest
+      when: ansible_distribution == "CentOS"
+    
+    - name: add php support for apache
+      dnf:
+        name: php
+        state: latest
+      when: ansible_distribution == "CentOS"
