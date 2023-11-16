@@ -1,10 +1,27 @@
 ---
+- name: Install Apache on CentOS
+  hosts: all
+  become: yes
 
-- hosts: all
-  become: true
   tasks:
-
-    - name: install apache2 package
+    - name: Update the package cache
       yum:
+        name: '*'
+        state: latest
+      when: ansible_os_family == 'RedHat'
+
+    - name: Install Apache package
+      package:
         name: httpd
         state: present
+
+    - name: Start Apache service
+      service:
+        name: httpd
+        state: started
+
+    - name: Enable Apache service on boot
+      service:
+        name: httpd
+        enabled: yes
+
