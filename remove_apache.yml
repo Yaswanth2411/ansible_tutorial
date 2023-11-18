@@ -1,0 +1,23 @@
+---
+- name: Install Apache2 on Ubuntu
+  hosts: file_servers
+  become: yes
+
+  tasks:
+    - name: Install Apache package and php support for Ubuntu
+      apt:
+        name: 
+          - apache2
+          - libapache2-mod-php
+        state: absent
+        update_cache: yes 
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Install Apache package and php support for CentOS
+      yum:
+        name: 
+          - httpd
+          - php
+        state: absent
+        update_cache: yes 
+      when: ansible_distribution == "CentOS"
